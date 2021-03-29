@@ -1,0 +1,23 @@
+{
+    "name": "italofaraujo/desafios-back",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Italo Araujo",
+            "email": "italofaraujo@gmail.com"
+        }
+    ],
+    "require": {
+        "robmorgan/phinx": "^0.12.6",
+        "pecee/simple-router": "4.2.0.6",
+        "illuminate/database": "^8.34",
+        "vlucas/phpdotenv": "^5.3",
+        "firebase/php-jwt": "^5.2"
+    },
+    "autoload" : {
+        "psr-4": {
+            "Desafios\\App\\" : "app/",
+            "Desafios\\Src\\" : "src/"
+        }
+    }
+}
