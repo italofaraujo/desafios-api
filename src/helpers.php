@@ -86,3 +86,8 @@ function csrf_token(): ?string
 
     return null;
 }
+
+
+function get_http_code_erro($code, $default = 400){
+    return ( $code >= 400 && $code <= 499 ) ? $code : $default;
+}

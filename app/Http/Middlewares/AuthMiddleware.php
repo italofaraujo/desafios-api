@@ -3,8 +3,7 @@ namespace Desafios\App\Http\Middlewares;
 
 use Pecee\Http\Middleware\IMiddleware;
 use Pecee\Http\Request;
-use Firebase\JWT\JWT;
-use DateTimeImmutable;
+use Desafios\Src\JWTAuth;
 use Exception;
 
 class AuthMiddleware implements IMiddleware {
@@ -12,39 +11,31 @@ class AuthMiddleware implements IMiddleware {
     public function handle(Request $request): void 
     {
         
-        if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
-            header('HTTP/1.0 400 Bad Request');
-            echo 'Token not found in request';
-            exit;
-        }
-
-        $jwt =  $matches[1];
-
-        // Authenticate user, will be available using request()->user
-        ///$request->user = User::authenticate();
-        
-        //redirect(url('profile'));
-        
         try {
-            $secretKey  = 'bGS6lzFqvvSQ8ALbOxatm7/Vk7mLQyzqaS34Q4oR1ew=';
-            $token = JWT::decode($jwt, $secretKey, ['HS512']);
-            $now = new DateTimeImmutable();
-            $serverName = "desafios.tete";
-
-            if ($token->iss !== $serverName ||
-                $token->nbf > $now->getTimestamp() ||
-                $token->exp < $now->getTimestamp())
-            {
-                throw new Exception("Error Processing Request", 1);
-                
+            if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
+                throw new Exception("Token não encontrado na solicitação", 400);
+                exit;
             }
+            if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+                throw new Exception("Token não encontrado na solicitação", 400);
+                exit;
+            }
+    
+            $jwt =  $matches[1];
+            
+            $objJWTAuth = new JWTAuth(); 
+            $jwt = $objJWTAuth->validateJWT($jwt);
         } catch (Exception $e) {
+            $codeHttp = get_http_code_erro($e->getCode(),401);
+            http_response_code($codeHttp);
+                
+            if($codeHttp == 400){
+                echo json_encode(['message'=> $e->getMessage()]);
+                exit();
+            }
+
             $request->setRewriteUrl(url('unauthorized'));
         }
-
-        
-
-       
 
     }
 }

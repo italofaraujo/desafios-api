@@ -2,32 +2,14 @@
 namespace Desafios\App\Http\Controllers;
 use Desafios\App\Models\User;
 use Exception;
-use Firebase\JWT\JWT;
-use DateTimeImmutable;
+use Desafios\Src\JWTAuth;
+
 
 class UserController {
  
     
 
-    private function getJwt($idUsuario){
-        $secretKey  = 'bGS6lzFqvvSQ8ALbOxatm7/Vk7mLQyzqaS34Q4oR1ew=';
-        $issuedAt   = new DateTimeImmutable();
-        $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();                                      // Retrieved from filtered POST data
-        $serverName = "desafios.teste";
-        $data = [
-            'iat'  => $issuedAt->getTimestamp(),         // Issued at: time when the token was generated
-            'nbf'  => $issuedAt->getTimestamp(),         // Not before
-            'exp'  => $expire,           // Expire
-            'id_usuario' => $idUsuario,
-            'iss'  => $serverName
-        ];     // User name
-
-        return JWT::encode(
-                $data,
-                $secretKey,
-                'HS512'
-        );   
-    }
+    
      /**
      * Display a listing of the resource.
      *
@@ -49,30 +31,23 @@ class UserController {
             $password = md5($password);
             $user = User::where('email', $email)->where('password', $password);
             if($user->count() == 0  ){
-                throw new Exception("E-mail ou senha incorreta!", 1);
+                throw new Exception("E-mail ou senha incorreta!",   );
             }
 
             $user = $user->first();
              
-            
-            $jwt = $this->getJwt($user->id);  
-
-
-
-            $returnData['success'] = true;
-            $returnData['message'] = 'Login efetuado com sucesso!';
-            $returnData['jwt'] = $jwt;
-            $returnData['data'] = $user;
+            $objJWTAuth = new JWTAuth(); 
+            $jwt = $objJWTAuth->getJwt($user->id);  
+            $user->jwt = $jwt;
+            $returnData = $user;
             
         } catch (Exception $e) {
-            $returnData['success'] = false;
-            $returnData['message'] = $e->getMessage();
+            http_response_code(400);
+            $returnData = json_encode(['message' => $e->getMessage()]);
         }
       
 
-        return json_encode($returnData);
-        
-        return $user;
+        return $returnData;
     }
 
     /**
@@ -111,16 +86,19 @@ class UserController {
                 ]
             );
 
-            $returnData['success'] = true;
-            $returnData['message'] = 'Usuário cadastrado com sucesso';
-            $returnData['data'] = $user;
+            $objJWTAuth = new JWTAuth(); 
+            $jwt = $objJWTAuth->getJwt($user->id);  
+            $user->jwt = $jwt;
+
+            $returnData = $user;
+            
         } catch (Exception $e) {
-            $returnData['success'] = false;
-            $returnData['message'] = $e->getMessage();
+            http_response_code(400);
+            $returnData = json_encode(['message' => $e->getMessage()]);
         }
       
 
-        return json_encode($returnData);
+        return $returnData;
 
     }
 
