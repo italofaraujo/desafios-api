@@ -23,6 +23,7 @@ final class CreateChallengesTable extends AbstractMigration
             ->addColumn('description', 'text')
             ->addColumn('explanation', 'text')
             ->addColumn('thophy_video', 'string')
+            ->addColumn('route_front', 'string')
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('updated_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('deleted_at', 'timestamp', ['null' => true])

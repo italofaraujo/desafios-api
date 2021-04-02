@@ -20,21 +20,23 @@ final class InsertChallenges extends AbstractMigration
     {
         $builder = $this->getQueryBuilder();
         $builder
-            ->insert(['id','name', 'description','explanation','thophy_video'])
+            ->insert(['id','name', 'description','explanation','thophy_video','route_front'])
             ->into('challenges')
             ->values([
                 'id' => 1, 
                 'name' => 'Memoria', 
                 'description' => 'description memoria', 
                 'explanation' => 'explanation memoria',
-                'thophy_video' => 'v1.mp4'
+                'thophy_video' => 'v1.mp4',
+                'route_front' => 'desafioMemoria'
             ])
             ->values([
                 'id' => 2, 
                 'name' => 'Quiz', 
                 'description' => 'description quiz', 
                 'explanation' => 'explanation quiz',
-                'thophy_video' => 'v2.mp4'
+                'thophy_video' => 'v2.mp4',
+                'route_front' => 'desafioQuiz'
             ])
             ->execute();
     }

@@ -4,6 +4,12 @@ use Pecee\SimpleRouter\SimpleRouter;
 use Dotenv\Dotenv;
 use Desafios\Src\Database;
 
+header("Access-Control-Allow-Origin: * ");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header('Content-Type: application/json');
+
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
@@ -19,6 +25,6 @@ include 'routes/routes.php';
 try {
     SimpleRouter::start();
 } catch (Exception $e) {
-    //var_dump($e->getCode());
-    echo $e->getMessage();
+    http_response_code(404);
+    echo json_encode(['message' => $e->getMessage()]);
 }

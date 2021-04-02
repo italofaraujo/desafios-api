@@ -11,7 +11,7 @@ class JWTAuth{
     public function getJWT($idUsuario){
     
         $issuedAt   = new DateTimeImmutable();
-        $expire     = $issuedAt->modify('+60 minutes')->getTimestamp(); 
+        $expire     = $issuedAt->modify('+300 minutes')->getTimestamp(); 
         $data = [
             'iat'  => $issuedAt->getTimestamp(),         // Issued at: time when the token was generated
             'nbf'  => $issuedAt->getTimestamp(),         // Not before

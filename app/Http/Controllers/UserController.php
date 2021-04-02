@@ -22,16 +22,16 @@ class UserController {
             $password = input('password','','post');
 
             if(empty($email)){
-                throw new Exception("O e-mail é obrigatório!", 1);
+                throw new Exception("O e-mail é obrigatório!", 400);
             }
 
             if(empty($password)){
-                throw new Exception("A senha é obrigatória!", 1);
+                throw new Exception("A senha é obrigatória!", 400);
             }
             $password = md5($password);
             $user = User::where('email', $email)->where('password', $password);
             if($user->count() == 0  ){
-                throw new Exception("E-mail ou senha incorreta!",   );
+                throw new Exception("E-mail ou senha incorreta!",   200);
             }
 
             $user = $user->first();
@@ -40,9 +40,10 @@ class UserController {
             $jwt = $objJWTAuth->getJwt($user->id);  
             $user->jwt = $jwt;
             $returnData = $user;
-            
+            http_response_code(201);
         } catch (Exception $e) {
-            http_response_code(400);
+            $codeHttp = get_http_code($e->getCode(),400);
+            http_response_code($codeHttp);
             $returnData = json_encode(['message' => $e->getMessage()]);
         }
       
@@ -62,19 +63,19 @@ class UserController {
             $password = input('password','','post');
     
             if(empty($name)){
-                throw new Exception("O nome é obrigatório!", 1);
+                throw new Exception("O nome é obrigatório!", 400);
             }
 
             if(empty($email)){
-                throw new Exception("O e-mail é obrigatório!", 1);
+                throw new Exception("O e-mail é obrigatório!", 400);
             }
 
             if(empty($password)){
-                throw new Exception("A senha é obrigatória!", 1);
+                throw new Exception("A senha é obrigatória!", 400);
             }
 
             if(User::where('email', $email)->count() > 0  ){
-                throw new Exception("Email já cadastrado!", 1);
+                throw new Exception("Email já cadastrado!", 200);
             }
 
             
@@ -91,13 +92,14 @@ class UserController {
             $user->jwt = $jwt;
 
             $returnData = $user;
-            
+            http_response_code(201);
         } catch (Exception $e) {
-            http_response_code(400);
+            $codeHttp = get_http_code($e->getCode(),400);
+            http_response_code($codeHttp);
             $returnData = json_encode(['message' => $e->getMessage()]);
         }
       
-
+        
         return $returnData;
 
     }

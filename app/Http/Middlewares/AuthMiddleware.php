@@ -12,6 +12,7 @@ class AuthMiddleware implements IMiddleware {
     {
         
         try {
+            /*
             if (empty($_SERVER['HTTP_AUTHORIZATION'])) {
                 throw new Exception("Token não encontrado na solicitação", 400);
                 exit;
@@ -22,11 +23,19 @@ class AuthMiddleware implements IMiddleware {
             }
     
             $jwt =  $matches[1];
+            */
+            if (empty($_REQUEST['auth'])) {
+                throw new Exception("Token não encontrado na solicitação", 400);
+                exit;
+            }
             
+            $jwt =  $_REQUEST['auth'];
+
+
             $objJWTAuth = new JWTAuth(); 
             $jwt = $objJWTAuth->validateJWT($jwt);
         } catch (Exception $e) {
-            $codeHttp = get_http_code_erro($e->getCode(),401);
+            $codeHttp = get_http_code($e->getCode(),401);
             http_response_code($codeHttp);
                 
             if($codeHttp == 400){
